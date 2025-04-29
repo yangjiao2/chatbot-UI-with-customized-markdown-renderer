@@ -1,0 +1,20 @@
+version: '3.8'
+services:
+  nextjs-app:
+    image: node:19-alpine3.16 
+    build:
+      context: .
+      dockerfile: Dockerfile
+  nginx:
+    image: nginx:alpine 
+    build:
+      context: ./nginx-docker
+      dockerfile: Dockerfile
+    depends_on:
+      - nextjs-app
+    ports:
+      - '8080:8080'
+    environment:
+      - NEXTJS_CONTAINER_IP=nextjs-app # supplying environment vars for convert-nginx.sh file.
+    command: [ 'sh', '/etc/nginx/convert-nginx.sh'] 
+    # this is for parsing the convert-nginx.sh file into
